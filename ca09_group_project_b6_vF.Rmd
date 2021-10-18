@@ -624,6 +624,22 @@ Taking e to the power of the values yield: [334.3,1392.7]
 
 We are 95% confident that given the above assumptions - the price of the airbnb for four nights lie within the stated range of [334.3,1392.7] dollars. 
 
+Using the predict funtion we can get the same results.
+```{r}
+testdata <- c(114, 4.86, 2, 3, 3.96, "Downtown","Private room","Private room in residential home")
+testnames <- c("number_of_reviews", "review_scores_rating", "bedrooms", "accommodates", "reviews_per_month","neighbourhood_simplified","room_type","prop_type_simplified")
+test <- rbind(testdata)
+colnames(test) <- testnames
+testframe <- data.frame(test)
+
+testframe <- testframe %>% 
+  mutate(number_of_reviews = parse_number(number_of_reviews),
+         review_scores_rating = parse_number(review_scores_rating),
+         bedrooms = parse_number(bedrooms),
+         accommodates = parse_number(accommodates),
+         reviews_per_month = parse_number(reviews_per_month)) 
+predict(model8_1, testframe, interval = "confidence")
+```
 
 ## Predictive Test 
 We further run a predictive test on the model, with the data split into training and testing. 
@@ -653,6 +669,7 @@ pred <- predict(model8_1, listings_filtered_log, interval = "confidence")
 predict_and_original_data <- cbind(listings_filtered_log, pred)
 ```
 
+In conclusion, the model derived is able to explain the price of Airbnb's in San Francisco quite well, given the high adjusted R-squared of 0.59. We are also able to provide nuances to the city's hotel / airbnb pricing, as we observe differences in price across neighborhoods and property and room types. 
 
 To further improve the analysis, we might consider factors around hosts, like how long they've been hosts, and other specific ratings review, like cleaniless, location, etc. Interestingly, our chosen model `model8_1` actually fits the filtered dataset (with review ratings, review scores higher than a value, etc) significantly better, with adjusted R-squared of up to 0.705. This indicates that there may be quite a bit of noise in the data, and if we try to eliminate those, the more explanatory power we have. 
 
